@@ -3,6 +3,7 @@ package br.com.bakery.dad.service;
 
 
 import br.com.bakery.dad.dto.ProductDTO;
+import br.com.bakery.dad.entities.Sale;
 import br.com.bakery.dad.mapper.ModelMapperService;
 import br.com.bakery.dad.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,6 @@ public class ProductService {
         assert entity != null;
         entity.setName(product.getName());
         entity.setPrice(product.getPrice());
-        entity.setQtdStock(product.getQtdStock()        );
 
         return modelMapper.parseObject(productRepository.save(entity), ProductDTO.class);
     }

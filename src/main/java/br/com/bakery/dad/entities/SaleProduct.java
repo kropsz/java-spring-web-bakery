@@ -1,3 +1,4 @@
+
 package br.com.bakery.dad.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -5,18 +6,28 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "product")
+@Table(name = "sale_product")
 @Setter
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-public class Product {
+public class SaleProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
-    private String name;
-    private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "sale_id")
+    private Sale sale;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private Integer quantity;
+
 }
+

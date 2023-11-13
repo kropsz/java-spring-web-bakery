@@ -1,9 +1,11 @@
-package br.com.bakery.dad.entities;
+/*package br.com.bakery.dad.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "saleReport")
@@ -17,10 +19,10 @@ public class SaleReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
+    private Date data;
     private Double totalPrice;
 
-    @OneToOne
-    @JoinColumn(name = "venda_id")
-    private Sale sale;
+    @OneToMany(mappedBy = "saleReport", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sale> sales = new ArrayList<>();
 }
+*/

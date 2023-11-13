@@ -3,6 +3,7 @@ package br.com.bakery.dad.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,14 +22,12 @@ public class Sale {
     private Double totalPrice;
     private Date date;
 
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleProduct> saleProducts = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "sale_product",
-            joinColumns = @JoinColumn(name = "sale_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products;
 
+    //@ManyToOne
+    //@JoinColumn(name = "saleReport_id")
+    //private SaleReport saleReport;
 
 }

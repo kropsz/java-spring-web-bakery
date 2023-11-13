@@ -1,7 +1,8 @@
 package br.com.bakery.dad.controllers;
 
-import br.com.bakery.dad.dto.ProductDTO;
-import br.com.bakery.dad.service.ProductService;
+import br.com.bakery.dad.dto.SaleDTO;
+import br.com.bakery.dad.repository.SaleRepository;
+import br.com.bakery.dad.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,39 +11,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
-public class ProductController {
+@RequestMapping("/sales")
+public class SaleController {
 
-    private final ProductService productService;
+    private final SaleService saleService;
 
     @Autowired
-    public ProductController(ProductService productService){
-        this.productService = productService;
+    public SaleController(SaleService saleService){
+        this.saleService = saleService;
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDTO findById(@PathVariable(value = "id") Long id){
-        return productService.findById(id);
+    public SaleDTO findById(@PathVariable(value = "id")  Long id){
+        return saleService.findById(id);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProductDTO> findAll(){
-        return productService.findAllProducts();
+    public List<SaleDTO> findAll(){
+        return saleService.findAll();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDTO create(@RequestBody ProductDTO product){
-        return productService.create(product);
+    public SaleDTO create(@RequestBody SaleDTO sale){
+        return saleService.create(sale);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDTO update(@RequestBody ProductDTO product){
-        return productService.update(product);
+    public SaleDTO update(@RequestBody SaleDTO sale){
+        return saleService.update(sale);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/id")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
-        productService.delete(id);
+        saleService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }
