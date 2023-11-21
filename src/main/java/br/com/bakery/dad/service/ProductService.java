@@ -3,9 +3,11 @@ package br.com.bakery.dad.service;
 
 
 import br.com.bakery.dad.dto.ProductDTO;
-import br.com.bakery.dad.entities.Sale;
+import br.com.bakery.dad.exceptions.product.ProductCreationException;
+import br.com.bakery.dad.exceptions.product.ProductNotFoundException;
 import br.com.bakery.dad.mapper.ModelMapperService;
 import br.com.bakery.dad.repository.ProductRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.bakery.dad.entities.Product;
@@ -24,22 +26,31 @@ public class ProductService {
     }
 
     public ProductDTO findById(Long id){
-       var entity = productRepository.findById(id).orElse(null);
+       var entity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
         return modelMapper.parseObject(entity, ProductDTO.class);
 
     }
 
     public List<ProductDTO> findAllProducts(){
+        try{
         return modelMapper.parseListObjects(productRepository.findAll(), ProductDTO.class);
-    }
+        }catch (Exception e){
+            throw new ProductNotFoundException("Error searching all products");
+        }
+        }
 
     public ProductDTO create(ProductDTO product){
-        var entity = modelMapper.parseObject(product, Product.class);
-        return modelMapper.parseObject(productRepository.save(entity), ProductDTO.class);
+        try {
+            var entity = modelMapper.parseObject(product, Product.class);
+            return modelMapper.parseObject(productRepository.save(entity), ProductDTO.class);
+        }catch (Exception e){
+            throw new ProductCreationException("Error creating product");
+        }
+
     }
 
-    public ProductDTO update(@org.jetbrains.annotations.NotNull ProductDTO product){
-        var entity = productRepository.findById(product.getId()).orElse(null);
+    public ProductDTO update(@NotNull ProductDTO product){
+    var entity = productRepository.findById(product.getId()).orElseThrow(() -> new ProductNotFoundException(product.getId()));
         assert entity != null;
         entity.setName(product.getName());
         entity.setPrice(product.getPrice());
@@ -49,7 +60,7 @@ public class ProductService {
 
     public void delete(Long id) {
 
-        var entity = productRepository.findById((id)).orElse(null);
+        var entity = productRepository.findById((id)).orElseThrow(() -> new ProductNotFoundException(id));
         assert entity != null;
         productRepository.delete(entity);
     }

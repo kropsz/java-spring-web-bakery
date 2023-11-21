@@ -20,10 +20,6 @@ public class SaleProduct {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "sale_id")
-    private Sale sale;
-
-    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 

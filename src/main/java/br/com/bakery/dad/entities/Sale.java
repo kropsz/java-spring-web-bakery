@@ -22,12 +22,8 @@ public class Sale {
     private Double totalPrice;
     private Date date;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    @JoinColumn(name = "sale_id")
     private List<SaleProduct> saleProducts = new ArrayList<>();
-
-
-    //@ManyToOne
-    //@JoinColumn(name = "saleReport_id")
-    //private SaleReport saleReport;
 
 }

@@ -1,7 +1,6 @@
 package br.com.bakery.dad.controllers;
 
 import br.com.bakery.dad.dto.SaleDTO;
-import br.com.bakery.dad.repository.SaleRepository;
 import br.com.bakery.dad.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,7 +40,7 @@ public class SaleController {
         return saleService.update(sale);
     }
 
-    @DeleteMapping(value = "/id")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
         saleService.delete(id);
         return ResponseEntity.noContent().build();
