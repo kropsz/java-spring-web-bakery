@@ -1,28 +1,14 @@
-/*package br.com.bakery.dad.entities;
+package br.com.bakery.dad.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+import br.com.bakery.dad.dto.SaleDTO;
+import lombok.Data;
+import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Entity
-@Table(name = "saleReport")
-@Getter
-@Setter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class SaleReport {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Date data;
-    private Double totalPrice;
-
-    @OneToMany(mappedBy = "saleReport", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sale> sales = new ArrayList<>();
+            private Page<SaleDTO> sales;
+            private Date startDate;
+            private Date endDate;
 }
-*/

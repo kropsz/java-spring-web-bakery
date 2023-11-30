@@ -1,7 +1,11 @@
 package br.com.bakery.dad.mapper;
 
+import br.com.bakery.dad.dto.SaleDTO;
+import br.com.bakery.dad.entities.Sale;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,5 +32,14 @@ public class ModelMapperService {
             destinationObjects.add(modelMapper.map(o, destination));
         }
         return destinationObjects;
+    }
+
+    public <S, T> Page<T> parsePage(Page<S> sourcePage, Class<T> targetType) {
+        List<T> targetList = sourcePage.getContent()
+                .stream()
+                .map(sourceItem -> modelMapper.map(sourceItem, targetType))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(targetList, sourcePage.getPageable(), sourcePage.getTotalElements());
     }
 }

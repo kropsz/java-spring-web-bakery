@@ -1,8 +1,11 @@
 package br.com.bakery.dad.controllers;
 
 import br.com.bakery.dad.dto.SaleDTO;
+import br.com.bakery.dad.entities.SaleReport;
 import br.com.bakery.dad.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -47,6 +51,15 @@ public class SaleController {
     public ResponseEntity<SaleDTO> update(@PathVariable Long id, @RequestBody SaleDTO sale){
         SaleDTO updateSaleDto = saleService.update(sale);
         return ResponseEntity.ok(updateSaleDto);
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<SaleReport> getSalesReportByPeriod(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
+            Pageable pageable) {
+        SaleReport saleReport = saleService.getSalesReportByPeriod(startDate, endDate, pageable);
+        return ResponseEntity.ok(saleReport);
     }
 
     @DeleteMapping(value = "/{id}")

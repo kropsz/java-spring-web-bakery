@@ -5,6 +5,7 @@ import br.com.bakery.dad.dto.SaleDTO;
 import br.com.bakery.dad.entities.Product;
 import br.com.bakery.dad.entities.Sale;
 import br.com.bakery.dad.entities.SaleProduct;
+import br.com.bakery.dad.entities.SaleReport;
 import br.com.bakery.dad.exceptions.product.ProductNotFoundException;
 import br.com.bakery.dad.exceptions.sale.SaleNotFoundExcpetion;
 import br.com.bakery.dad.mapper.ModelMapperService;
@@ -12,8 +13,11 @@ import br.com.bakery.dad.repository.ProductRepository;
 import br.com.bakery.dad.repository.SaleRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -90,6 +94,17 @@ public class SaleService {
         var entity = saleRepository.findById(id).orElseThrow(() -> new SaleNotFoundExcpetion("Couldn't find the sale to delete"));
         assert entity != null;
         saleRepository.delete(entity);
+    }
+
+    public SaleReport getSalesReportByPeriod(Date startDate, Date endDate, Pageable pageable) {
+        Page<Sale> sales = saleRepository.findByDateBetween(startDate, endDate, pageable);
+
+        SaleReport saleReport = new SaleReport();
+        saleReport.setSales(modelMapper.parsePage(sales, SaleDTO.class));
+        saleReport.setStartDate(startDate);
+        saleReport.setEndDate(endDate);
+
+        return saleReport;
     }
 
     public Double calculateTotalPrice(@NotNull Sale sale) {
