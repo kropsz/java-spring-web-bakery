@@ -49,6 +49,12 @@ public class ProductService {
 
     }
 
+    public List<ProductDTO> createProducts(List<ProductDTO> productDTOs) {
+        List<Product> products = modelMapper.parseListObjects(productDTOs, Product.class);
+        List<Product> createdProducts = productRepository.saveAll(products);
+
+        return modelMapper.parseListObjects(createdProducts, ProductDTO.class);
+    }
     public ProductDTO update(@NotNull ProductDTO product){
     var entity = productRepository.findById(product.getId()).orElseThrow(() -> new ProductNotFoundException(product.getId()));
         assert entity != null;
@@ -63,5 +69,18 @@ public class ProductService {
         var entity = productRepository.findById((id)).orElseThrow(() -> new ProductNotFoundException(id));
         assert entity != null;
         productRepository.delete(entity);
+    }
+
+    public ProductDTO applyDiscount(Long id, Double discountPercentage){
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+        if (product != null) {
+            Double discountPrice = calculateDiscountedPrice(product.getPrice(), discountPercentage);
+            product.setPrice(discountPrice);
+        }
+        return modelMapper.parseObject(product, ProductDTO.class);
+    }
+
+    private Double calculateDiscountedPrice(Double price, Double discountPercentage) {
+        return price - (price * discountPercentage / 100);
     }
 }
