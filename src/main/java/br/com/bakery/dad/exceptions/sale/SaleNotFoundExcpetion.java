@@ -1,5 +1,7 @@
 package br.com.bakery.dad.exceptions.sale;
 
+import java.util.UUID;
+
 import br.com.bakery.dad.exceptions.BakeryException;
 
 public class SaleNotFoundExcpetion extends BakeryException {
@@ -12,7 +14,7 @@ public class SaleNotFoundExcpetion extends BakeryException {
         super(message);
     }
 
-    public SaleNotFoundExcpetion(Long saleId){
+    public SaleNotFoundExcpetion(UUID saleId){
         super("Sale not found: " + saleId);
     }
 

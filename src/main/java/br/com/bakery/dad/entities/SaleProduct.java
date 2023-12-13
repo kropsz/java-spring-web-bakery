@@ -1,23 +1,21 @@
 
 package br.com.bakery.dad.entities;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "sale_product")
-@Setter
-@Getter
-@EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class SaleProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @JsonIgnore
-    private Long id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

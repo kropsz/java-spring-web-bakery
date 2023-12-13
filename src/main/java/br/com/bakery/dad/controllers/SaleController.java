@@ -14,20 +14,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/sales")
 public class SaleController {
 
-    private final SaleService saleService;
-
     @Autowired
-    public SaleController(SaleService saleService){
-        this.saleService = saleService;
-    }
+    private  SaleService saleService;
+    
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SaleDTO> findById(@PathVariable(value = "id")  Long id){
+    public ResponseEntity<SaleDTO> findById(@PathVariable(value = "id")  UUID id){
         SaleDTO saleDTO = saleService.findById(id);
         if (saleDTO != null)
             return ResponseEntity.ok(saleDTO);
@@ -52,7 +50,7 @@ public class SaleController {
     }
 
     @PutMapping(value = "/{id}" ,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SaleDTO> update(@PathVariable Long id, @RequestBody SaleDTO sale){
+    public ResponseEntity<SaleDTO> update(@PathVariable UUID id, @RequestBody SaleDTO sale){
         SaleDTO existingSaleDTO = saleService.findById(id);
         if (existingSaleDTO != null) {
             existingSaleDTO.setTotalPrice(sale.getTotalPrice());
@@ -66,7 +64,7 @@ public class SaleController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
+    public ResponseEntity<?> delete(@PathVariable(value = "id") UUID id){
         saleService.delete(id);
         return ResponseEntity.noContent().build();
     }

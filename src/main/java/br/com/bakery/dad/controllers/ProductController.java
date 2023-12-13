@@ -9,20 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService productService;
-
     @Autowired
-    public ProductController(ProductService productService){
-        this.productService = productService;
-    }
+    private ProductService productService;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductDTO> findById(@PathVariable(value = "id") Long id){
+    public ResponseEntity<ProductDTO> findById(@PathVariable(value = "id") UUID id){
             ProductDTO productDTO = productService.findById(id);
             if (productDTO != null)
                 return ResponseEntity.ok(productDTO);
@@ -54,7 +51,7 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO updatedProductDTO) {
+    public ResponseEntity<ProductDTO> update(@PathVariable UUID id, @RequestBody ProductDTO updatedProductDTO) {
             ProductDTO existingProductDTO = productService.findById(id);
             if (existingProductDTO != null) {
                 existingProductDTO.setName(updatedProductDTO.getName());
@@ -67,13 +64,13 @@ public class ProductController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
+    public ResponseEntity<?> delete(@PathVariable(value = "id") UUID id){
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(value = "/{productId}/apply-discount")
-        public ResponseEntity<ProductDTO> applyDiscount(@PathVariable Long productId, @RequestParam Double discount) {
+        public ResponseEntity<ProductDTO> applyDiscount(@PathVariable UUID productId, @RequestParam Double discount) {
             ProductDTO product = productService.applyDiscount(productId, discount);
             return ResponseEntity.ok(product);
         }

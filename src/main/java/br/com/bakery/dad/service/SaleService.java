@@ -17,25 +17,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SaleService {
 
-    private final SaleRepository saleRepository;
-    private final ProductRepository productRepository;
-    private final ModelMapperService modelMapper;
-
-
+        
     @Autowired
-    public SaleService(SaleRepository saleRepository, ModelMapperService modelMapper, ProductRepository productRepository) {
-        this.saleRepository = saleRepository;
-        this.modelMapper = modelMapper;
-        this.productRepository = productRepository;
-    }
+    private SaleRepository saleRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private ModelMapperService modelMapper;
 
-    public SaleDTO findById(Long id) {
+
+   
+
+    public SaleDTO findById(UUID id) {
         var entity = saleRepository.findById(id).orElseThrow(() -> new SaleNotFoundExcpetion(id));
         return modelMapper.parseObject(entity, SaleDTO.class);
 
@@ -53,6 +54,7 @@ public class SaleService {
     public SaleDTO create(SaleDTO saleDTO) {
         var saleAux = modelMapper.parseObject(saleDTO, Sale.class);
         saleAux.getSaleProducts().clear();
+        saleAux.setDate(Instant.now());        
         if (saleDTO.getSaleProducts() != null) {
             for (SaleProduct saleProductAux : saleDTO.getSaleProducts()) {
                 Product product = productRepository.findById(saleProductAux.getProduct().getId()).orElseThrow(
@@ -89,8 +91,7 @@ public class SaleService {
         return modelMapper.parseObject(saleRepository.save(entity), SaleDTO.class);
     }
 
-    public void delete(Long id) {
-
+    public void delete(UUID id) {
         var entity = saleRepository.findById(id).orElseThrow(() -> new SaleNotFoundExcpetion("Couldn't find the sale to delete"));
         assert entity != null;
         saleRepository.delete(entity);

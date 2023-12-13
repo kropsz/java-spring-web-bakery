@@ -1,10 +1,12 @@
 package br.com.bakery.dad.repository;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.bakery.dad.entities.Product;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.stereotype.Repository;
 
-@EnableJpaRepositories
-public interface ProductRepository extends JpaRepository<Product, Long> {
+@Repository
+public interface ProductRepository extends JpaRepository<Product, UUID> {
 
 }

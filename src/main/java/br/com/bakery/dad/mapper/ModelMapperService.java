@@ -1,7 +1,6 @@
 package br.com.bakery.dad.mapper;
 
-import br.com.bakery.dad.dto.SaleDTO;
-import br.com.bakery.dad.entities.Sale;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,12 +14,10 @@ import java.util.stream.Collectors;
 @Service
 public class ModelMapperService {
 
-    private final ModelMapper modelMapper;
-
     @Autowired
-    public ModelMapperService(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
+    private ModelMapper modelMapper;
+
+ 
 
     public <O, D> D parseObject(O origin, Class<D> destination) {
         return modelMapper.map(origin, destination);

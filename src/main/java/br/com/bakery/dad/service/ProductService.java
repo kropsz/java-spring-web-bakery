@@ -12,20 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.bakery.dad.entities.Product;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
-    private final ModelMapperService modelMapper;
-
     @Autowired
-    public ProductService(ProductRepository productRepository, ModelMapperService modelMapper) {
-        this.productRepository = productRepository;
-        this.modelMapper = modelMapper;
-    }
+    private ProductRepository productRepository;
+    @Autowired
+    private ModelMapperService modelMapper;
 
-    public ProductDTO findById(Long id){
+    
+ 
+
+    public ProductDTO findById(UUID id){
        var entity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
         return modelMapper.parseObject(entity, ProductDTO.class);
 
@@ -55,6 +55,7 @@ public class ProductService {
 
         return modelMapper.parseListObjects(createdProducts, ProductDTO.class);
     }
+
     public ProductDTO update(@NotNull ProductDTO product){
     var entity = productRepository.findById(product.getId()).orElseThrow(() -> new ProductNotFoundException(product.getId()));
         assert entity != null;
@@ -64,14 +65,14 @@ public class ProductService {
         return modelMapper.parseObject(productRepository.save(entity), ProductDTO.class);
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
 
         var entity = productRepository.findById((id)).orElseThrow(() -> new ProductNotFoundException(id));
         assert entity != null;
         productRepository.delete(entity);
     }
 
-    public ProductDTO applyDiscount(Long id, Double discountPercentage){
+    public ProductDTO applyDiscount(UUID id, Double discountPercentage){
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
         if (product != null) {
             Double discountPrice = calculateDiscountedPrice(product.getPrice(), discountPercentage);
