@@ -37,7 +37,7 @@ public class ProductService {
         }catch (Exception e){
             throw new ProductNotFoundException("Error searching all products");
         }
-        }
+    }
 
     public ProductDTO create(ProductDTO product){
         try {
