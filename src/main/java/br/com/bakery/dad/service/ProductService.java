@@ -57,7 +57,8 @@ public class ProductService {
     }
 
     public ProductDTO update(@NotNull ProductDTO product){
-    var entity = productRepository.findById(product.getId()).orElseThrow(() -> new ProductNotFoundException(product.getId()));
+    var entity = productRepository.findById(product.getId()).orElseThrow(() ->
+            new ProductNotFoundException(product.getId()));
         assert entity != null;
         entity.setName(product.getName());
         entity.setPrice(product.getPrice());
@@ -65,11 +66,14 @@ public class ProductService {
         return modelMapper.parseObject(productRepository.save(entity), ProductDTO.class);
     }
 
-    public void delete(UUID id) {
+    public boolean delete(UUID id) {
 
         var entity = productRepository.findById((id)).orElseThrow(() -> new ProductNotFoundException(id));
-        assert entity != null;
-        productRepository.delete(entity);
+        if (entity != null) {
+            productRepository.delete(entity);
+            return true;
+        }
+        return false;
     }
 
     public ProductDTO applyDiscount(UUID id, Double discountPercentage){

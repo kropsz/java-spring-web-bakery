@@ -1,7 +1,9 @@
 package br.com.bakery.dad.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,7 @@ public class ProductServiceTest {
         expectedProductDTO.setName(mockProduct.getName());
         expectedProductDTO.setPrice(mockProduct.getPrice());
 
-        when(productRepository.findById(productId)).thenReturn(Optional.<Product>of(mockProduct));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
         when(modelMapper.parseObject(mockProduct, ProductDTO.class)).thenReturn(expectedProductDTO);
 
         ProductDTO result = productService.findById(productId);
@@ -65,12 +67,12 @@ public class ProductServiceTest {
     @DisplayName("Verificar se o findAll retorna todos os produtos corretamente")
     void testFindAll(){
          List<Product> mockProducts = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
-        Product product = new Product();
-        product.setId(UUID.randomUUID());
-        product.setName("Test Product " + i);
-        product.setPrice(10.0 + i);
-        mockProducts.add(product);
+         for (int i = 0; i < 3; i++) {
+            Product product = new Product();
+            product.setId(UUID.randomUUID());
+            product.setName("Test Product " + i);
+            product.setPrice(10.0 + i);
+            mockProducts.add(product);
     }
 
     List<ProductDTO> expectedProductDTOs = mockProducts.stream()
@@ -114,24 +116,94 @@ public class ProductServiceTest {
     
         assertEquals(mockProductDTO, result);
     }
-
     @Test
+    @DisplayName("Verificar se está criando vários produtos ao mesmo tempo")
     void testCreateProducts() {
+        List<Product> mockProducts = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Product product = new Product();
+            product.setId(UUID.randomUUID());
+            product.setName("Test Product " + i);
+            product.setPrice(10.0 + i);
+            mockProducts.add(product);
+        }
 
+        List<ProductDTO> expectedProductDTOs = mockProducts.stream()
+                .map(product -> {
+                    ProductDTO dto = new ProductDTO();
+                    dto.setId(product.getId());
+                    dto.setName(product.getName());
+                    dto.setPrice(product.getPrice());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        when(modelMapper.parseListObjects(expectedProductDTOs, Product.class)).thenReturn(mockProducts);
+        when(productRepository.saveAll(mockProducts)).thenReturn(mockProducts);
+        when(modelMapper.parseListObjects(mockProducts, ProductDTO.class)).thenReturn(expectedProductDTOs);
+
+        List<ProductDTO> result = productService.createProducts(expectedProductDTOs);
+        assertEquals(expectedProductDTOs, result);
     }
 
     @Test
+    @DisplayName("Verificar se um produto está sendo atualizado corretamente")
     void testUpdate() {
+        UUID productId = UUID.randomUUID();
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        mockProduct.setName("Test Product");
+        mockProduct.setPrice(10.0);
+
+        ProductDTO expectedProductDTO = new ProductDTO();
+        expectedProductDTO.setId(mockProduct.getId());
+        expectedProductDTO.setName(mockProduct.getName());
+        expectedProductDTO.setPrice(mockProduct.getPrice());
+
+        when(productRepository.findById(expectedProductDTO.getId())).thenReturn(Optional.of(mockProduct));
+        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(modelMapper.parseObject(mockProduct, ProductDTO.class)).thenReturn(expectedProductDTO);
+
+        ProductDTO result = productService.update(expectedProductDTO);
+        assertEquals(expectedProductDTO, result);
 
     }
 
     @Test
+    @DisplayName("Verificar se o Produto está sendo excluído corretamente")
     void testDelete() {
+        UUID productId = UUID.randomUUID();
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        mockProduct.setName("Test Product");
+        mockProduct.setPrice(10.0);
 
+        when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+        doNothing().when(productRepository).delete(mockProduct);
+        boolean result = productService.delete(productId);
+        assertTrue(result);
     }
 
-       @Test
+    @Test
+    @DisplayName("Verificar se está aplicando o desconto no produto corretamente")
     void testApplyDiscount() {
+        UUID productId = UUID.randomUUID();
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        mockProduct.setName("Test Product");
+        mockProduct.setPrice(100.0);
 
-    }
+        ProductDTO expectedProductDTO = new ProductDTO();
+        expectedProductDTO.setId(mockProduct.getId());
+        expectedProductDTO.setName(mockProduct.getName());
+        expectedProductDTO.setPrice(90.0);
+
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+        when(modelMapper.parseObject(mockProduct, ProductDTO.class)).thenReturn(expectedProductDTO);
+        ProductDTO result = productService.applyDiscount(productId, 10.0);
+
+        assertEquals(90.0, result.getPrice());
+
+        }
 }
